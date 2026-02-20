@@ -1,0 +1,56 @@
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  name: job-scrapping-iceberg
+  namespace: airflow
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "apache/spark:v3.5.0" # Il faut toujours utiliser une version de spark qui matche avec ses packages
+  mainApplicationFile: "s3a://sparkapplication/job_scrapping.py"
+  sparkVersion: "3.5.0"
+  
+  # LES PACKAGES (Dépendances)
+  deps:
+    packages:
+      - "org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1"
+      - "org.apache.hadoop:hadoop-aws:3.3.4"
+      - "org.projectnessie.nessie-integrations:nessie-spark-extensions-3.5_2.12:0.77.1"
+      - "com.crealytics:spark-excel_2.12:3.5.0_0.20.3"
+
+  # CONFIGURATION SPARK (Extensions & Catalogue)
+  sparkConf:
+    "spark.sql.extensions": "org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,org.projectnessie.spark.extensions.NessieSparkSessionExtensions"
+    "spark.sql.catalog.nessie": "org.apache.iceberg.spark.SparkCatalog"
+    "spark.sql.catalog.nessie.catalog-impl": "org.apache.iceberg.nessie.NessieCatalog"
+    "spark.sql.catalog.nessie.uri": "http://nessie.trino.svc.cluster.local:19120/api/v1"
+    "spark.sql.catalog.nessie.ref": "main"
+    "spark.sql.catalog.nessie.warehouse": "s3a://bronze/"
+    "spark.driver.extraJavaOptions": "-Dorg.apache.poi.util.IOUtils.setByteArrayMaxOverride=1000000000"
+
+  # CONFIGURATION MINIO (Hadoop)
+  hadoopConf:
+    "fs.s3a.endpoint": "http://minio.mon-namespace.svc.cluster.local:80"
+    "fs.s3a.path.style.access": "true"
+    "fs.s3a.impl": "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider"
+
+  driver:
+    cores: 1
+    memory: "16g" 
+    serviceAccount: spark-operator-spark
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: "datalab-team"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minio-datalabteam123"
+  executor:
+    cores: 2
+    instances: 2
+    memory: "8g"
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        value: "datalab-team"
+      - name: AWS_SECRET_ACCESS_KEY
+        value: "minio-datalabteam123"
