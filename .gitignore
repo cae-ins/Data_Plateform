@@ -1,0 +1,23 @@
+# Credentials — ne jamais commiter
+.env
+*.env
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+*.egg-info/
+
+# Jupyter checkpoints
+.ipynb_checkpoints/
+*/.ipynb_checkpoints/
+
+# macOS
+.DS_Store
+
+# Données locales (ne pas versionner les données brutes)
+*.parquet
+*.csv
+*.xlsx
+*.dta
+*.sav

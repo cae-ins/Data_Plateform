@@ -1,0 +1,78 @@
+# ============================================================
+# SPARK OPERATOR : Bronze → Silver (transformation SQL)
+# ============================================================
+# Packages inclus : iceberg, hadoop-aws, nessie
+# Script         : s3a://sparkapplication/bronze_to_silver.py
+#
+# Appliquer : kubectl apply -f 03_bronze_to_silver.yaml -n airflow
+# ============================================================
+
+apiVersion: "sparkoperator.k8s.io/v1beta2"
+kind: SparkApplication
+metadata:
+  # <<< À MODIFIER >>>
+  name: bronze-to-silver-ma-table
+  namespace: airflow
+spec:
+  type: Python
+  pythonVersion: "3"
+  mode: cluster
+  image: "apache/spark:v3.5.0"
+  mainApplicationFile: "s3a://sparkapplication/bronze_to_silver.py"
+  sparkVersion: "3.5.0"
+
+  deps:
+    packages:
+      - "org.apache.iceberg:iceberg-spark-runtime-3.5_2.12:1.6.1"
+      - "org.apache.hadoop:hadoop-aws:3.3.4"
+      - "org.projectnessie.nessie-integrations:nessie-spark-extensions-3.5_2.12:0.77.1"
+
+  sparkConf:
+    "spark.sql.extensions": >-
+      org.apache.iceberg.spark.extensions.IcebergSparkSessionExtensions,
+      org.projectnessie.spark.extensions.NessieSparkSessionExtensions
+    "spark.sql.catalog.nessie":              "org.apache.iceberg.spark.SparkCatalog"
+    "spark.sql.catalog.nessie.catalog-impl": "org.apache.iceberg.nessie.NessieCatalog"
+    "spark.sql.catalog.nessie.uri":          "http://nessie.trino.svc.cluster.local:19120/api/v1"
+    "spark.sql.catalog.nessie.ref":          "main"
+    "spark.sql.catalog.nessie.warehouse":    "s3a://bronze/"
+    # Silver utilise un warehouse différent
+    "spark.sql.catalog.nessie_silver.warehouse": "s3a://silver/"
+
+  hadoopConf:
+    "fs.s3a.endpoint":                 "http://minio.mon-namespace.svc.cluster.local:80"
+    "fs.s3a.path.style.access":        "true"
+    "fs.s3a.impl":                     "org.apache.hadoop.fs.s3a.S3AFileSystem"
+    "fs.s3a.aws.credentials.provider": "org.apache.hadoop.fs.s3a.SimpleAWSCredentialsProvider"
+
+  driver:
+    cores: 2
+    memory: "16g"
+    serviceAccount: spark-operator-spark
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: access-key
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: secret-key
+
+  executor:
+    cores: 4
+    instances: 3
+    memory: "8g"
+    env:
+      - name: AWS_ACCESS_KEY_ID
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: access-key
+      - name: AWS_SECRET_ACCESS_KEY
+        valueFrom:
+          secretKeyRef:
+            name: minio-credentials
+            key: secret-key
