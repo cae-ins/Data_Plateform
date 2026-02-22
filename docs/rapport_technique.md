@@ -1,7 +1,7 @@
 # Rapport Technique — Data Platform ANSTAT
 
-**Institut National de la Statistique**
-**Direction des Systèmes d'Information et des Données**
+**Agence Nationale de la Statistique**
+**Departement Informatique / Cellule d'Analyses Economique - DataLab**
 
 ---
 
