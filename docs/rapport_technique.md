@@ -1,7 +1,7 @@
 # Rapport Technique — Data Platform ANSTAT
 
-**Institut National de la Statistique**
-**Direction des Systèmes d'Information et des Données**
+**Agence Nationale de la Statistique**
+**Departement Informatique / Cellule d'Analyses Economique - DataLab**
 
 ---
 
@@ -657,7 +657,3 @@ Créer des fichiers de travail pour les jobs PyTorch (GeoAI U-Net, IAI tenseurs)
 - Mettre en place des politiques de rétention par couche (Bronze : 5 ans, Silver : illimité, Gold : selon usage).
 - Documenter les lignages de données (quelle table Gold dépend de quelle table Silver, etc.).
 
----
-
-*Document généré dans le cadre de la mise en place de la Data Platform ANSTAT.*
-*Dépôt : `Data_Plateform/` — Branche : `main`*
