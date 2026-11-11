@@ -1,0 +1,108 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Encodage et langue ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[french]{babel}
+\usepackage{lmodern}
+
+% --- Mise en page ---
+\usepackage[margin=2.4cm]{geometry}
+\usepackage{xcolor}
+\usepackage{enumitem}
+\usepackage{tcolorbox}
+\usepackage[colorlinks=true,urlcolor=anstatvert,linkcolor=anstatvert]{hyperref}
+
+% --- Couleurs ANStat (reprises du portail) ---
+\definecolor{anstatvert}{HTML}{49655A}
+\definecolor{anstatvertfonce}{HTML}{1F2D28}
+\definecolor{anstatorange}{HTML}{F39323}
+\definecolor{anstatgris}{HTML}{5C6C75}
+
+\setlist[enumerate]{itemsep=3pt,topsep=4pt}
+\setlist[itemize]{itemsep=3pt,topsep=4pt}
+
+% --- En-tête du titre ---
+\makeatletter
+\renewcommand{\maketitle}{%
+  \begin{center}
+    {\small\color{anstatorange}\bfseries\MakeUppercase{StatLab \textperiodcentered{} ANStat}}\\[2pt]
+    {\LARGE\bfseries\color{anstatvertfonce}\@title}\\[4pt]
+    {\color{anstatgris}\@date}
+  \end{center}
+  \vspace{4pt}
+  {\color{anstatorange}\hrule height 2pt}
+  \vspace{10pt}
+}
+\makeatother
+
+% --- Boîte « information » ---
+\newtcolorbox{infobox}{
+  colback=anstatorange!8, colframe=anstatorange,
+  boxrule=1pt, arc=3pt, left=10pt, right=10pt, top=6pt, bottom=6pt
+}
+
+\newcommand{\service}[1]{\textbf{\color{anstatvertfonce}#1}}
+
+\title{Se connecter à StatLab (ANStat)}
+\date{Guide de l'utilisateur}
+
+\begin{document}
+\maketitle
+
+\noindent
+Ce guide explique comment accéder aux services de StatLab (environnements de travail,
+stockage, tableaux de bord, requêtes SQL\dots) via le portail unique, avec votre
+compte personnel.
+
+\section*{Prérequis}
+\begin{itemize}
+  \item Être connecté au \textbf{VPN de l'ANSTAT}.
+\end{itemize}
+
+\section*{1.\quad Ouvrir le portail}
+Dans votre navigateur, rendez-vous à l'adresse du portail StatLab fournie par
+l'administrateur de la plateforme.
+Vous êtes automatiquement redirigé vers la page de connexion.
+
+\section*{2.\quad Se connecter (première connexion)}
+\begin{enumerate}
+  \item \textbf{Identifiant} : la partie située avant le \texttt{@} de votre adresse
+        professionnelle. \\
+        Exemple : pour \texttt{a.bakayoko@stat.plan.gouv.ci}, l'identifiant est
+        \texttt{a.bakayoko}. \emph{(Votre adresse complète fonctionne aussi.)}
+  \item \textbf{Mot de passe temporaire} :
+        \begin{infobox}
+          Il vous est \textbf{communiqué par l'administrateur de la plateforme} lors de
+          la création de votre compte.
+        \end{infobox}
+  \item Le système vous demande aussitôt de \textbf{choisir votre propre mot de passe}.
+        Faites-le : il est personnel et confidentiel.
+  \item Vous arrivez sur le \textbf{portail StatLab}, avec les cartes de services.
+\end{enumerate}
+
+\section*{3.\quad Utiliser un service}
+Cliquez sur une carte (par exemple \service{Environnements de travail},
+\service{Stockage}, \service{Tableaux de bord}\dots). Le service s'ouvre et vous
+\textbf{reconnaît automatiquement} : inutile de retaper votre mot de passe
+(connexion unique).
+
+\section*{Bon à savoir}
+\begin{itemize}
+  \item \service{Trino} (Requêtes SQL) : le navigateur affiche un avertissement de
+        sécurité (certificat interne). C'est normal — cliquez sur « Avancé » puis
+        « Continuer » pour accéder.
+  \item \service{Environnements de travail} (JupyterHub) : au lancement, vous
+        choisissez votre environnement (R, Python, VS~Code, RStudio\dots) et vous
+        retrouvez vos fichiers habituels.
+  \item \textbf{Un problème de connexion ?} Contactez l'administrateur de la plateforme.
+\end{itemize}
+
+\vspace{6pt}
+{\color{anstatorange}\hrule height 1pt}
+\vspace{4pt}
+{\small\color{anstatgris}\itshape
+Les connexions aux services sont protégées par un compte unique (authentification
+centralisée). Conservez votre mot de passe personnel ; ne le partagez pas.}
+
+\end{document}
